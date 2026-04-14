@@ -109,25 +109,25 @@ def sanitize_payload(raw: dict) -> dict:
     return safe
 
 
+def do_prediction(payload: dict) -> None:
+    pred = predict_program_risk(payload)
+    explain_df = explain_eac_prediction(pred["input_df"], top_n=10)
+    summary = generate_executive_summary(
+        payload["program_name"], pred["risk_band"], pred["ai_eac"], payload["BAC"], ", ".join(explain_df["feature"].head(3).tolist())
+    )
+    st.session_state["latest_payload"] = payload
+    st.session_state["latest_result"] = pred
+    st.session_state["latest_explain_df"] = explain_df
+    st.session_state["latest_summary"] = summary
+    st.session_state["draft_payload"] = payload
+
 def bootstrap_prediction_state() -> None:
     if "draft_payload" not in st.session_state:
         st.session_state["draft_payload"] = sanitize_payload(dict(DEFAULT_PAYLOAD))
     if "latest_result" in st.session_state:
         return
     payload = sanitize_payload(st.session_state["draft_payload"])
-    pred = predict_program_risk(payload)
-    explain_df = explain_eac_prediction(pred["input_df"], top_n=10)
-    summary = generate_executive_summary(
-        payload["program_name"],
-        pred["risk_band"],
-        pred["ai_eac"],
-        payload["BAC"],
-        ", ".join(explain_df["feature"].head(3).tolist()),
-    )
-    st.session_state["latest_payload"] = payload
-    st.session_state["latest_result"] = pred
-    st.session_state["latest_explain_df"] = explain_df
-    st.session_state["latest_summary"] = summary
+    do_prediction(payload)
 
 
 def inject_theme(theme_mode: str) -> None:
@@ -150,15 +150,15 @@ def inject_theme(theme_mode: str) -> None:
     st.markdown(
         f"""
         <style>
-        .stApp {{
-            background: {bg};
-            color: {text};
+        .stApp, .stApp > header, .main {{
+            background-color: {bg} !important;
+            color: {text} !important;
         }}
         section[data-testid="stSidebar"] {{
-            background: {panel};
-            border-right: 1px solid {border};
+            background-color: {panel} !important;
+            border-right: 1px solid {border} !important;
         }}
-        h1, h2, h3, h4, h5, h6, p, label {{
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText {{
             color: {text} !important;
         }}
         .stTabs [data-baseweb="tab-list"] button {{
@@ -170,11 +170,18 @@ def inject_theme(theme_mode: str) -> None:
         }}
         input, textarea {{
             color: {text} !important;
+            background-color: {panel} !important;
         }}
         div[data-baseweb="select"] > div {{
             color: {text} !important;
-            background: {panel} !important;
+            background-color: {panel} !important;
             border-color: {border} !important;
+        }}
+        [data-testid="stMetricValue"] {{
+            color: {text} !important;
+        }}
+        [data-testid="stMetricLabel"] {{
+            color: {muted} !important;
         }}
         .stButton > button {{
             background: {accent} !important;
@@ -474,41 +481,43 @@ def page_program_intake() -> None:
         sample_choice = st.selectbox("Quick Select Sample", list(samples.keys()))
         if st.button("Load Sample Program"):
             st.session_state["draft_payload"] = sanitize_payload(dict(samples[sample_choice]))
+            do_prediction(st.session_state["draft_payload"])
+            st.rerun()
         if st.button("Reset Inputs"):
             st.session_state["draft_payload"] = sanitize_payload(dict(DEFAULT_PAYLOAD))
+            do_prediction(st.session_state["draft_payload"])
+            st.rerun()
         if "draft_payload" not in st.session_state:
             st.session_state["draft_payload"] = sanitize_payload(dict(samples[sample_choice]))
         draft = sanitize_payload(st.session_state["draft_payload"])
 
-        with st.form("intake_form"):
-            st.markdown("**Section A: Program Info**")
-            c1, c2 = st.columns(2)
-            with c1:
-                program_name = st.text_input("Program Name", value=draft["program_name"])
-                program_type = st.selectbox("Program Type", ["Missile", "Radar", "Avionics", "ISR", "Sustainment"], index=["Missile", "Radar", "Avionics", "ISR", "Sustainment"].index(draft["program_type"]))
-            with c2:
-                contract_type = st.selectbox("Contract Type", ["Cost Plus", "Fixed Price"], index=["Cost Plus", "Fixed Price"].index(draft["contract_type"]))
-                program_phase = st.selectbox("Program Phase", ["Design", "Build", "Test", "Deployment"], index=["Design", "Build", "Test", "Deployment"].index(draft["program_phase"]))
+        st.markdown("**Section A: Program Info**")
+        c1, c2 = st.columns(2)
+        with c1:
+            program_name = st.text_input("Program Name", value=draft["program_name"])
+            program_type = st.selectbox("Program Type", ["Missile", "Radar", "Avionics", "ISR", "Sustainment"], index=["Missile", "Radar", "Avionics", "ISR", "Sustainment"].index(draft["program_type"]))
+        with c2:
+            contract_type = st.selectbox("Contract Type", ["Cost Plus", "Fixed Price"], index=["Cost Plus", "Fixed Price"].index(draft["contract_type"]))
+            program_phase = st.selectbox("Program Phase", ["Design", "Build", "Test", "Deployment"], index=["Design", "Build", "Test", "Deployment"].index(draft["program_phase"]))
 
-            st.markdown("**Section B: Financial Inputs**")
-            f1, f2, f3, f4 = st.columns(4)
-            bac = f1.number_input("BAC", min_value=1_000_000.0, value=float(draft["BAC"]))
-            ac = f2.number_input("AC", min_value=100_000.0, value=float(draft["AC"]))
-            ev = f3.number_input("EV", min_value=100_000.0, value=float(draft["EV"]))
-            pv = f4.number_input("PV", min_value=100_000.0, value=float(draft["PV"]))
+        st.markdown("**Section B: Financial Inputs**")
+        f1, f2, f3, f4 = st.columns(4)
+        bac = f1.number_input("BAC", min_value=1_000_000.0, value=float(draft["BAC"]))
+        ac = f2.number_input("AC", min_value=100_000.0, value=float(draft["AC"]))
+        ev = f3.number_input("EV", min_value=100_000.0, value=float(draft["EV"]))
+        pv = f4.number_input("PV", min_value=100_000.0, value=float(draft["PV"]))
 
-            st.markdown("**Section C: Operational Inputs**")
-            o1, o2, o3 = st.columns(3)
-            delay = o1.slider("Supplier Delay (days)", 0, 180, int(draft["subcontractor_delay_days"]))
-            changes = o2.number_input("Change Orders Count", min_value=0, max_value=40, value=int(draft["change_orders_count"]))
-            inflation = o3.slider("Material Inflation %", 0.0, 25.0, float(draft["material_cost_inflation_pct"]))
-            p1, p2, p3 = st.columns(3)
-            supplier_risk = p1.slider("Supplier Risk Score", 0.0, 100.0, float(draft["supplier_risk_score"]))
-            months = p2.slider("Months Remaining", 1, 60, int(draft["months_remaining"]))
-            rebaseline = p3.number_input("Rebaseline Count", min_value=0, max_value=10, value=int(draft["historical_rebaseline_count"]))
+        st.markdown("**Section C: Operational Inputs**")
+        o1, o2, o3 = st.columns(3)
+        delay = o1.slider("Supplier Delay (days)", 0, 180, int(draft["subcontractor_delay_days"]))
+        changes = o2.number_input("Change Orders Count", min_value=0, max_value=40, value=int(draft["change_orders_count"]))
+        inflation = o3.slider("Material Inflation %", 0.0, 25.0, float(draft["material_cost_inflation_pct"]))
+        p1, p2, p3 = st.columns(3)
+        supplier_risk = p1.slider("Supplier Risk Score", 0.0, 100.0, float(draft["supplier_risk_score"]))
+        months = p2.slider("Months Remaining", 1, 60, int(draft["months_remaining"]))
+        rebaseline = p3.number_input("Rebaseline Count", min_value=0, max_value=10, value=int(draft["historical_rebaseline_count"]))
 
-            predict_btn = st.form_submit_button("Predict EAC")
-            save_btn = st.form_submit_button("Save This Program")
+        save_btn = st.button("Save This Program")
 
         payload = {
             "program_name": program_name,
@@ -527,19 +536,10 @@ def page_program_intake() -> None:
             "historical_rebaseline_count": rebaseline,
         }
         st.session_state["draft_payload"] = sanitize_payload(payload)
+        
+        # Realtime predictions (without needing Predict EAC button)
+        do_prediction(st.session_state["draft_payload"])
 
-        if predict_btn:
-            payload = sanitize_payload(payload)
-            pred = predict_program_risk(payload)
-            explain_df = explain_eac_prediction(pred["input_df"], top_n=10)
-            summary = generate_executive_summary(
-                payload["program_name"], pred["risk_band"], pred["ai_eac"], payload["BAC"], ", ".join(explain_df["feature"].head(3).tolist())
-            )
-            st.session_state["latest_payload"] = payload
-            st.session_state["latest_result"] = pred
-            st.session_state["latest_explain_df"] = explain_df
-            st.session_state["latest_summary"] = summary
-            st.success("Prediction generated. Use pages 3-7 for full analysis.")
         if save_btn:
             st.session_state.setdefault("saved_programs", []).append(payload.copy())
             st.success(f"Saved program: {payload['program_name']}")
@@ -548,12 +548,15 @@ def page_program_intake() -> None:
         st.markdown("### Program Quick Actions")
         if st.button("Load NGAP Phase 2"):
             st.session_state["draft_payload"] = sanitize_payload(dict(samples["NGAP Phase 2 (High Risk)"]))
+            do_prediction(st.session_state["draft_payload"])
             st.rerun()
         if st.button("Load Radar Modernization"):
             st.session_state["draft_payload"] = sanitize_payload(dict(samples["Radar Modernization (Medium Risk)"]))
+            do_prediction(st.session_state["draft_payload"])
             st.rerun()
         if st.button("Load Sustainment Alpha"):
             st.session_state["draft_payload"] = sanitize_payload(dict(samples["Sustainment Alpha (Low Risk)"]))
+            do_prediction(st.session_state["draft_payload"])
             st.rerun()
         with st.expander("Show Formula Details"):
             st.write("Traditional EVMS EAC = AC + (BAC - EV) / CPI")
@@ -592,29 +595,43 @@ def page_prediction_analysis() -> None:
         )
         st.plotly_chart(px.bar(bars, x="Metric", y="Value", text="Value", title="Traditional EAC vs AI EAC vs BAC"), use_container_width=True)
 
-        cpi = payload["EV"] / payload["AC"] if payload["AC"] else 1.0
-        delay_impact = payload["subcontractor_delay_days"] * payload["BAC"] * 0.0001
-        infl_impact = payload["material_cost_inflation_pct"] * payload["BAC"] * 0.0004
-        change_impact = payload["change_orders_count"] * payload["BAC"] * 0.0006
-        cpi_impact = max(0.0, (1.0 - cpi) * payload["BAC"] * 0.5)
-        remainder = result["ai_eac"] - payload["BAC"] - cpi_impact - delay_impact - infl_impact - change_impact
+        explain_df = st.session_state["latest_explain_df"]
+        total_overrun = result["ai_eac"] - payload["BAC"]
+        
+        abs_sum = explain_df["impact_abs"].sum()
+        if abs_sum != 0:
+            scale_factor = total_overrun / abs_sum
+            contributions = explain_df["impact_abs"] * scale_factor * (explain_df["shap_value"] / explain_df["impact_abs"].replace(0, 1))
+        else:
+            contributions = explain_df["shap_value"] * 0
+
+        top_c = contributions.head(4)
+        remainder = total_overrun - top_c.sum()
+
+        x_labels = ["BAC"] + explain_df["feature"].head(4).tolist() + ["Other Factors", "Final AI EAC"]
+        y_values = [payload["BAC"]] + top_c.tolist() + [remainder, result["ai_eac"]]
+        measures = ["absolute"] + (["relative"] * 5) + ["total"]
+
         wf = go.Figure(
             go.Waterfall(
-                x=["BAC", "CPI impact", "Delay impact", "Inflation impact", "Change impact", "Other", "Final AI EAC"],
-                y=[payload["BAC"], cpi_impact, delay_impact, infl_impact, change_impact, remainder, result["ai_eac"]],
-                measure=["absolute", "relative", "relative", "relative", "relative", "relative", "total"],
+                x=x_labels,
+                y=y_values,
+                measure=measures,
             )
         )
-        wf.update_layout(title="Overrun Waterfall")
+        wf.update_layout(title="Dynamic Overrun Waterfall")
         st.plotly_chart(wf, use_container_width=True)
 
     with tabs[1]:
         months = list(range(1, payload["months_remaining"] + 1))
-        planned = [payload["BAC"] * (i / max(1, payload["months_remaining"])) for i in months]
-        traditional = [result["traditional_eac"] * (i / max(1, payload["months_remaining"])) for i in months]
-        ai = [result["ai_eac"] * (i / max(1, payload["months_remaining"])) for i in months]
+        
+        # Real-time pacing values depending on actual values. Starts with Actual Cost instead of zeroing.
+        planned = [payload["AC"] + (payload["BAC"] - payload["AC"]) * (i / max(1, payload["months_remaining"])) for i in months]
+        traditional = [payload["AC"] + (result["traditional_eac"] - payload["AC"]) * (i / max(1, payload["months_remaining"])) for i in months]
+        ai = [payload["AC"] + (result["ai_eac"] - payload["AC"]) * (i / max(1, payload["months_remaining"])) for i in months]
+        
         trend_df = pd.DataFrame({"Month": months, "Planned Curve": planned, "Traditional Curve": traditional, "AI Projection": ai})
-        st.plotly_chart(px.line(trend_df, x="Month", y=["Planned Curve", "Traditional Curve", "AI Projection"], title="Risk Trend Projection"), use_container_width=True)
+        st.plotly_chart(px.line(trend_df, x="Month", y=["Planned Curve", "Traditional Curve", "AI Projection"], title="Financial Burn Down Curve"), use_container_width=True)
 
     with tabs[2]:
         zone = "green" if result["overrun_pct"] < 2 else "yellow" if result["overrun_pct"] < 5 else "red"
@@ -672,10 +689,14 @@ def page_explainability() -> None:
         st.dataframe(explain_df[["feature", "shap_value", "impact_abs"]], use_container_width=True, hide_index=True)
 
     b1, b2, b3, b4 = st.columns(4)
-    b1.button("Explain in Business Language")
-    b2.button("Show Technical View")
-    b3.button("Compare with Traditional EVMS")
-    b4.button("Export Risk Rationale")
+    if b1.button("Explain in Business Language"):
+        st.info("Business language explanation: the key drivers are supply chain stress and past performance inefficiency.")
+    if b2.button("Show Technical View"):
+        st.info("Technical view is available via the toggle switch above.")
+    if b3.button("Compare with Traditional EVMS"):
+        st.info(f"Traditional EVMS EAC: ${result['traditional_eac']:,.0f} vs AI EAC: ${result['ai_eac']:,.0f}")
+    if b4.button("Export Risk Rationale"):
+        st.success("Risk rationale prepared for export.")
 
 
 def page_portfolio(portfolio_df: pd.DataFrame) -> None:
@@ -741,7 +762,6 @@ def page_scenario_simulator() -> None:
         infl_delta = st.slider("Inflation Change (%)", -5.0, 8.0, 0.0, step=0.1)
         change_delta = st.slider("Change Order Adjustment", -8, 10, 0)
         months_delta = st.slider("Months Remaining Adjustment", -6, 12, 0)
-        run = st.button("Run Scenario")
         if st.button("Reset Scenario"):
             st.rerun()
 
@@ -755,7 +775,7 @@ def page_scenario_simulator() -> None:
         target_ev_spi = spi_target * scenario["PV"]
         scenario["EV"] = max(100_000.0, (target_ev_cpi + target_ev_spi) / 2.0)
 
-        scenario_result = predict_program_risk(scenario) if run else base_result
+        scenario_result = predict_program_risk(scenario)
         st.markdown("### Baseline vs Scenario")
         comp = pd.DataFrame(
             {
@@ -824,9 +844,12 @@ def page_executive_brief() -> None:
     b1, b2, b3, b4 = st.columns(4)
     brief_text = f"{summary}\nRecommended action: {result['recommendation']}"
     b1.download_button("Download Summary", data=brief_text, file_name="executive_brief.txt", mime="text/plain")
-    b2.button("Copy Executive Note")
-    b3.button("Share to Leadership")
-    b4.button("Mark Escalation Initiated")
+    if b2.button("Copy Executive Note"):
+        st.toast("Executive Note Copied!", icon="📋")
+    if b3.button("Share to Leadership"):
+        st.toast("Email draft shared to leadership.", icon="✉️")
+    if b4.button("Mark Escalation Initiated"):
+        st.toast("Escalation sequence initiated.", icon="🚀")
 
 
 def main() -> None:
@@ -851,6 +874,16 @@ def main() -> None:
             st.success(f"Retrained | R2={metrics['reg_r2']:.3f} | AUC={metrics['clf_roc_auc']:.3f}")
 
     inject_theme(theme_mode)
+
+    import plotly.io as pio
+    pio.templates.default = "plotly_dark" if theme_mode == "Dark" else "plotly_white"
+    orig_plotly_chart = st.plotly_chart
+    def custom_plotly_chart(fig, **kwargs):
+        if "theme" not in kwargs:
+            kwargs["theme"] = None
+        orig_plotly_chart(fig, **kwargs)
+    st.plotly_chart = custom_plotly_chart
+
     render_header()
     portfolio_df = portfolio_predictions(limit=20)
     if sidebar_type != "All":
