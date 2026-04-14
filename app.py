@@ -138,7 +138,7 @@ def inject_theme(theme_mode: str) -> None:
         muted = "#b7c8e5"
         text = "#e9f1ff"
         border = "rgba(138,166,205,0.28)"
-        hero_bg = "linear-gradient(100deg, #32127a 0%, #0f2e84 55%, #00a7d6 100%)"
+        hero_bg = "linear-gradient(100deg, #153273 0%, #006eb3 55%, #0093c4 100%)"
     else:
         bg = "#eef3fb"
         panel = "#ffffff"
@@ -146,7 +146,7 @@ def inject_theme(theme_mode: str) -> None:
         muted = "#334a68"
         text = "#0a1f44"
         border = "rgba(15,54,118,0.16)"
-        hero_bg = "linear-gradient(100deg, #ece8ff 0%, #d9ecff 55%, #ccf5ff 100%)"
+        hero_bg = "linear-gradient(100deg, #184cc2 0%, #008cd6 55%, #00bae3 100%)"
     st.markdown(
         f"""
         <style>
@@ -212,14 +212,14 @@ def inject_theme(theme_mode: str) -> None:
             margin-bottom: 12px;
         }}
         .hero-title {{
-            font-size: clamp(1.02rem, 1.6vw, 1.22rem);
-            color: {accent};
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
+            color: #ffffff;
             font-weight: 700;
         }}
         .hero-sub {{
-            color: {muted};
-            font-size: clamp(0.90rem, 1.25vw, 1rem);
-            margin-top: 6px;
+            color: #f0f4f8;
+            font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+            margin-top: 8px;
             line-height: 1.5;
         }}
         .moving-wrap {{
@@ -359,10 +359,6 @@ def show_alert_banner(portfolio_df: pd.DataFrame) -> None:
 
 
 def render_header() -> None:
-    st.title("HCLTech AI Force-aligned Program EAC Intelligence Platform")
-    st.caption(
-        "Transforming defense and aerospace program finance with AI-powered Estimate-at-Completion intelligence, early overrun risk detection and action-oriented portfolio insights for enterprise decision leaders."
-    )
     st.markdown(
         """
         <div class="hero-card">
