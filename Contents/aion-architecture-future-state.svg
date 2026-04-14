@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" font-family="Arial, sans-serif">
+  <defs>
+    <linearGradient id="navyGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="100%" stop-color="#1a2744"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#065f46"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#581c87"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#92400e"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#134e4a"/>
+      <stop offset="100%" stop-color="#14b8a6"/>
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7f1d1d"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+    <linearGradient id="slateGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#475569"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="850" fill="url(#navyGrad)"/>
+  
+  <!-- Title -->
+  <text x="600" y="40" text-anchor="middle" fill="#e2e8f0" font-size="22" font-weight="bold">AION — Enterprise AI Operating System Architecture</text>
+  <text x="600" y="62" text-anchor="middle" fill="#64748b" font-size="12">Raytheon (RTX Corporation) | HCL Technologies | 7-Layer Future State (To-Be)</text>
+
+  <!-- Layer 7: Experience -->
+  <rect x="60" y="82" width="1080" height="80" rx="10" fill="url(#blueGrad)" opacity="0.9" filter="url(#shadow)"/>
+  <text x="80" y="108" fill="#fff" font-size="11" font-weight="bold" opacity="0.7">L7</text>
+  <text x="110" y="108" fill="#fff" font-size="14" font-weight="bold">EXPERIENCE LAYER</text>
+  <text x="80" y="128" fill="#dbeafe" font-size="10">Executive Command Center</text>
+  <text x="280" y="128" fill="#dbeafe" font-size="10">Plant Operations Dashboard</text>
+  <text x="500" y="128" fill="#dbeafe" font-size="10">Supply Chain Nerve Center</text>
+  <text x="720" y="128" fill="#dbeafe" font-size="10">NL Interface (AI Force)</text>
+  <text x="920" y="128" fill="#dbeafe" font-size="10">AR/VR Maintenance Overlay</text>
+  <text x="80" y="148" fill="#93c5fd" font-size="9" font-style="italic">Role-based views: CxO, Plant Manager, Supply Chain, Finance, HR, IT</text>
+
+  <!-- Layer 6: Intelligence -->
+  <rect x="60" y="172" width="1080" height="80" rx="10" fill="url(#purpleGrad)" opacity="0.9" filter="url(#shadow)"/>
+  <text x="80" y="198" fill="#fff" font-size="11" font-weight="bold" opacity="0.7">L6</text>
+  <text x="110" y="198" fill="#fff" font-size="14" font-weight="bold">INTELLIGENCE LAYER — AI Force Agentic Orchestration</text>
+  <rect x="80" y="208" width="150" height="30" rx="5" fill="#7c3aed" opacity="0.5"/>
+  <text x="155" y="228" text-anchor="middle" fill="#e9d5ff" font-size="9">Manufacturing Quality Agent</text>
+  <rect x="240" y="208" width="150" height="30" rx="5" fill="#7c3aed" opacity="0.5"/>
+  <text x="315" y="228" text-anchor="middle" fill="#e9d5ff" font-size="9">Supply Chain Risk Agent</text>
+  <rect x="400" y="208" width="150" height="30" rx="5" fill="#7c3aed" opacity="0.5"/>
+  <text x="475" y="228" text-anchor="middle" fill="#e9d5ff" font-size="9">Contract Pricing Agent</text>
+  <rect x="560" y="208" width="140" height="30" rx="5" fill="#7c3aed" opacity="0.5"/>
+  <text x="630" y="228" text-anchor="middle" fill="#e9d5ff" font-size="9">EVMS Agent</text>
+  <rect x="710" y="208" width="150" height="30" rx="5" fill="#7c3aed" opacity="0.5"/>
+  <text x="785" y="228" text-anchor="middle" fill="#e9d5ff" font-size="9">Clearance Pipeline Agent</text>
+  <rect x="870" y="208" width="150" height="30" rx="5" fill="#7c3aed" opacity="0.5"/>
+  <text x="945" y="228" text-anchor="middle" fill="#e9d5ff" font-size="9">Cyber Threat Agent</text>
+  <text x="1050" y="198" fill="#c4b5fd" font-size="8" text-anchor="end">Human-in-loop: Tier 1 &amp; 2</text>
+
+  <!-- Layer 5: Analytics -->
+  <rect x="60" y="262" width="1080" height="80" rx="10" fill="url(#greenGrad)" opacity="0.9" filter="url(#shadow)"/>
+  <text x="80" y="288" fill="#fff" font-size="11" font-weight="bold" opacity="0.7">L5</text>
+  <text x="110" y="288" fill="#fff" font-size="14" font-weight="bold">ANALYTICS LAYER — AI Foundry Data-to-Dollar Pipeline</text>
+  <text x="80" y="308" fill="#d1fae5" font-size="10">LLMs (Azure OpenAI)</text>
+  <text x="250" y="308" fill="#d1fae5" font-size="10">Computer Vision (Edge)</text>
+  <text x="440" y="308" fill="#d1fae5" font-size="10">Time-Series / Predictive</text>
+  <text x="650" y="308" fill="#d1fae5" font-size="10">Optimization Models</text>
+  <text x="840" y="308" fill="#d1fae5" font-size="10">MLOps Pipeline</text>
+  <text x="80" y="328" fill="#6ee7b7" font-size="9" font-style="italic">Model Registry | Drift Detection | A/B Testing | 90-Day Revalidation | Automated Retraining</text>
+
+  <!-- Layer 4: Data Platform -->
+  <rect x="60" y="352" width="1080" height="80" rx="10" fill="url(#tealGrad)" opacity="0.9" filter="url(#shadow)"/>
+  <text x="80" y="378" fill="#fff" font-size="11" font-weight="bold" opacity="0.7">L4</text>
+  <text x="110" y="378" fill="#fff" font-size="14" font-weight="bold">DATA PLATFORM</text>
+  <text x="80" y="398" fill="#ccfbf1" font-size="10">Unified Data Lake (Azure)</text>
+  <text x="290" y="398" fill="#ccfbf1" font-size="10">Real-time Streaming (IoT Hub)</text>
+  <text x="530" y="398" fill="#ccfbf1" font-size="10">Master Data Governance</text>
+  <text x="750" y="398" fill="#ccfbf1" font-size="10">Data Quality Engine</text>
+  <text x="940" y="398" fill="#ccfbf1" font-size="10">Data Catalog</text>
+  <text x="80" y="418" fill="#5eead4" font-size="9" font-style="italic">250,000+ OT tags | 3 segment data domains | Product, Supplier, Customer, Financial MDM</text>
+
+  <!-- Layer 3: Integration -->
+  <rect x="60" y="442" width="1080" height="80" rx="10" fill="url(#amberGrad)" opacity="0.9" filter="url(#shadow)"/>
+  <text x="80" y="468" fill="#fff" font-size="11" font-weight="bold" opacity="0.7">L3</text>
+  <text x="110" y="468" fill="#fff" font-size="14" font-weight="bold">INTEGRATION LAYER</text>
+  <text x="80" y="488" fill="#fef3c7" font-size="10">SAP BTP Integration Suite</text>
+  <text x="290" y="488" fill="#fef3c7" font-size="10">API Management (500+ apps)</text>
+  <text x="520" y="488" fill="#fef3c7" font-size="10">OPC-UA / MQTT Gateway</text>
+  <text x="730" y="488" fill="#fef3c7" font-size="10">Classified Boundary Gateway</text>
+  <text x="960" y="488" fill="#fef3c7" font-size="10">Event Mesh</text>
+  <text x="80" y="508" fill="#fbbf24" font-size="9" font-style="italic">BAPIs | IDocs | RFCs | REST APIs | CMMC-compliant cross-domain | ECC ↔ S/4HANA bridge</text>
+
+  <!-- Layer 2: Platform -->
+  <rect x="60" y="532" width="1080" height="80" rx="10" fill="url(#redGrad)" opacity="0.9" filter="url(#shadow)"/>
+  <text x="80" y="558" fill="#fff" font-size="11" font-weight="bold" opacity="0.7">L2</text>
+  <text x="110" y="558" fill="#fff" font-size="14" font-weight="bold">PLATFORM LAYER</text>
+  <text x="80" y="578" fill="#fecaca" font-size="10">Azure Government (IL5)</text>
+  <text x="290" y="578" fill="#fecaca" font-size="10">Azure Stack HCI (Edge)</text>
+  <text x="480" y="578" fill="#fecaca" font-size="10">SAP BTP</text>
+  <text x="600" y="578" fill="#fecaca" font-size="10">Azure ML Compute</text>
+  <text x="780" y="578" fill="#fecaca" font-size="10">Azure IoT Hub</text>
+  <text x="940" y="578" fill="#fecaca" font-size="10">Azure OpenAI Service</text>
+  <text x="80" y="598" fill="#f87171" font-size="9" font-style="italic">ITAR-compliant regions | FedRAMP High | DoD IL5 | US-person administered</text>
+
+  <!-- Layer 1: Infrastructure -->
+  <rect x="60" y="622" width="1080" height="80" rx="10" fill="url(#slateGrad)" opacity="0.9" filter="url(#shadow)"/>
+  <text x="80" y="648" fill="#fff" font-size="11" font-weight="bold" opacity="0.7">L1</text>
+  <text x="110" y="648" fill="#fff" font-size="14" font-weight="bold">INFRASTRUCTURE</text>
+  <text x="80" y="668" fill="#cbd5e1" font-size="10">Azure Government Cloud</text>
+  <text x="290" y="668" fill="#cbd5e1" font-size="10">On-Premises (Classified)</text>
+  <text x="490" y="668" fill="#cbd5e1" font-size="10">Edge (500+ Facilities)</text>
+  <text x="690" y="668" fill="#cbd5e1" font-size="10">Zero-Trust Network</text>
+  <text x="880" y="668" fill="#cbd5e1" font-size="10">ITAR Data Residency (US)</text>
+  <text x="80" y="688" fill="#94a3b8" font-size="9" font-style="italic">Hybrid deployment | 30+ countries | Classified/Unclassified boundary | SIPR/JWICS air-gap</text>
+
+  <!-- Right side: Governance Column -->
+  <rect x="1050" y="82" width="90" height="620" rx="6" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6"/>
+  <text x="1095" y="400" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold" transform="rotate(-90,1095,400)">GOVERNANCE &amp; COMPLIANCE: ITAR | CMMC | SOX | AS9100 | DFARS | CAS</text>
+
+  <!-- Left side: Data Flow arrows -->
+  <text x="40" y="400" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="bold" transform="rotate(-90,40,400)">DATA FLOW ↑↓ OT → Analytics → Intelligence → Experience</text>
+
+  <!-- Bottom: Source Systems -->
+  <rect x="60" y="720" width="1080" height="55" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="600" y="740" text-anchor="middle" fill="#64748b" font-size="11" font-weight="bold">EXISTING RTX SYSTEMS (As-Is Integration Points)</text>
+  <text x="100" y="760" fill="#475569" font-size="9">SAP ECC 6.0</text>
+  <text x="210" y="760" fill="#475569" font-size="9">Oracle EBS</text>
+  <text x="310" y="760" fill="#475569" font-size="9">Teamcenter</text>
+  <text x="410" y="760" fill="#475569" font-size="9">Windchill</text>
+  <text x="500" y="760" fill="#475569" font-size="9">Salesforce</text>
+  <text x="590" y="760" fill="#475569" font-size="9">Workday</text>
+  <text x="670" y="760" fill="#475569" font-size="9">ServiceNow</text>
+  <text x="770" y="760" fill="#475569" font-size="9">DCS/MES</text>
+  <text x="850" y="760" fill="#475569" font-size="9">SIPR/JWICS</text>
+  <text x="950" y="760" fill="#475569" font-size="9">500+ Apps</text>
+  <text x="1050" y="760" fill="#475569" font-size="9">S/4HANA (planned)</text>
+
+  <!-- Bottom labels -->
+  <text x="600" y="800" text-anchor="middle" fill="#334155" font-size="10">HCL Technologies — AI Force | AI Foundry | AI Labs | RTX-EOS-RFP-2026-0111 | CONFIDENTIAL</text>
+  
+  <!-- Connection arrows between source and L1 -->
+  <line x1="200" y1="720" x2="200" y2="702" stroke="#334155" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="600" y1="720" x2="600" y2="702" stroke="#334155" stroke-width="1"/>
+  <line x1="1000" y1="720" x2="1000" y2="702" stroke="#334155" stroke-width="1"/>
+</svg>
