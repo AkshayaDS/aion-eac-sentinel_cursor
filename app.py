@@ -132,41 +132,120 @@ def bootstrap_prediction_state() -> None:
 
 def inject_theme(theme_mode: str) -> None:
     if theme_mode == "Dark":
-        bg = "#081221"
-        panel = "#111d31"
-        accent = "#00bcd4"
-        muted = "#9fb2cc"
+        bg = "#06122a"
+        panel = "#0d1e3b"
+        accent = "#00c0f3"
+        muted = "#b7c8e5"
+        text = "#e9f1ff"
+        border = "rgba(138,166,205,0.28)"
+        hero_bg = "linear-gradient(100deg, #32127a 0%, #0f2e84 55%, #00a7d6 100%)"
     else:
-        bg = "#f4f8fc"
+        bg = "#eef3fb"
         panel = "#ffffff"
-        accent = "#0457d3"
-        muted = "#4d6078"
+        accent = "#0047bb"
+        muted = "#334a68"
+        text = "#0a1f44"
+        border = "rgba(15,54,118,0.16)"
+        hero_bg = "linear-gradient(100deg, #ece8ff 0%, #d9ecff 55%, #ccf5ff 100%)"
     st.markdown(
         f"""
         <style>
-        .stApp {{ background: {bg}; }}
+        .stApp {{
+            background: {bg};
+            color: {text};
+        }}
+        section[data-testid="stSidebar"] {{
+            background: {panel};
+            border-right: 1px solid {border};
+        }}
+        h1, h2, h3, h4, h5, h6, p, label {{
+            color: {text} !important;
+        }}
+        .stTabs [data-baseweb="tab-list"] button {{
+            color: {text} !important;
+        }}
+        .stTabs [aria-selected="true"] {{
+            border-bottom: 2px solid {accent} !important;
+            font-weight: 700 !important;
+        }}
+        input, textarea {{
+            color: {text} !important;
+        }}
+        div[data-baseweb="select"] > div {{
+            color: {text} !important;
+            background: {panel} !important;
+            border-color: {border} !important;
+        }}
+        .stButton > button {{
+            background: {accent} !important;
+            color: {"#041226" if theme_mode == "Dark" else "#ffffff"} !important;
+            border: none !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+        }}
+        .stButton > button:hover {{
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }}
         div[data-testid="stVerticalBlockBorderWrapper"] {{
-            border: 1px solid rgba(120,140,170,0.2);
-            border-radius: 12px;
+            border: 1px solid {border};
+            border-radius: 14px;
             padding: 1rem;
             background: {panel};
         }}
         .hero-card {{
-            border: 1px solid rgba(120,140,170,0.2);
-            border-radius: 12px;
-            padding: 14px 16px;
-            background: {panel};
-            margin-bottom: 10px;
+            border: 1px solid {border};
+            border-radius: 14px;
+            padding: 16px 18px;
+            background: {hero_bg};
+            margin-bottom: 12px;
         }}
         .hero-title {{
-            font-size: 1.06rem;
+            font-size: clamp(1.02rem, 1.6vw, 1.22rem);
             color: {accent};
             font-weight: 700;
         }}
         .hero-sub {{
             color: {muted};
-            font-size: 0.92rem;
-            margin-top: 4px;
+            font-size: clamp(0.90rem, 1.25vw, 1rem);
+            margin-top: 6px;
+            line-height: 1.5;
+        }}
+        .moving-wrap {{
+            overflow: hidden;
+            width: 100%;
+            border: 1px solid {border};
+            border-radius: 14px;
+            background: {panel};
+            padding: 8px 0;
+            margin: 8px 0 16px 0;
+        }}
+        .moving-track {{
+            display: flex;
+            width: max-content;
+            animation: slide 28s linear infinite;
+        }}
+        .moving-card {{
+            min-width: 260px;
+            margin: 0 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid {border};
+            background: {"#0a2750" if theme_mode == "Dark" else "#f6f9ff"};
+        }}
+        .moving-label {{
+            font-size: 0.82rem;
+            color: {muted};
+            margin-bottom: 4px;
+        }}
+        .moving-value {{
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: {accent};
+        }}
+        @keyframes slide {{
+            0% {{ transform: translateX(0); }}
+            100% {{ transform: translateX(-50%); }}
         }}
         </style>
         """,
@@ -269,19 +348,46 @@ def show_alert_banner(portfolio_df: pd.DataFrame) -> None:
 
 
 def render_header() -> None:
-    st.title("AION EAC Sentinel")
-    st.caption("AI-Powered Defense Program Cost Intelligence Platform")
+    st.title("HCLTech AI Force-aligned Program EAC Intelligence Platform")
+    st.caption(
+        "Transforming defense and aerospace program finance with AI-powered Estimate-at-Completion intelligence, early overrun risk detection and action-oriented portfolio insights for enterprise decision leaders."
+    )
     st.markdown(
         """
         <div class="hero-card">
-            <div class="hero-title">Hackathon Pitch Line</div>
+            <div class="hero-title">HCLTech AI Force-aligned Decision Platform</div>
             <div class="hero-sub">
-                Raytheon manages long-cycle defense programs where overruns are often detected too late via EVMS.
-                AION EAC Sentinel predicts EAC earlier, flags risk, explains drivers, and supports faster leadership decisions.
-                This maps directly to HCL AI Force EAC Intelligence and AI-powered EVMS use cases.
+                Transforming defense program finance with AI-powered Estimate-at-Completion intelligence,
+                overrun risk detection and actionable portfolio insights for enterprise leadership.
             </div>
         </div>
         """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_moving_cards(portfolio_df: pd.DataFrame) -> None:
+    total_programs = len(portfolio_df)
+    high_risk = int((portfolio_df["Risk"] == "High").sum())
+    exposure = portfolio_df["AI EAC"].sum() - portfolio_df["BAC"].sum()
+    avg_cpi = portfolio_df["CPI"].mean()
+    avg_spi = portfolio_df["SPI"].mean()
+    cards = [
+        ("Programs Monitored", f"{total_programs}"),
+        ("High Risk Programs", f"{high_risk}"),
+        ("Portfolio Exposure", money(exposure)),
+        ("Average CPI", f"{avg_cpi:.2f}"),
+        ("Average SPI", f"{avg_spi:.2f}"),
+        ("Escalation Candidates", f"{int((portfolio_df['Overrun %'] > 5).sum())}"),
+    ]
+    card_html = "".join(
+        [
+            f'<div class="moving-card"><div class="moving-label">{label}</div><div class="moving-value">{value}</div></div>'
+            for label, value in cards + cards
+        ]
+    )
+    st.markdown(
+        f'<div class="moving-wrap"><div class="moving-track">{card_html}</div></div>',
         unsafe_allow_html=True,
     )
 
@@ -343,10 +449,20 @@ def page_executive_overview(portfolio_df: pd.DataFrame) -> None:
         st.plotly_chart(fig, use_container_width=True)
 
     b1, b2, b3, b4 = st.columns(4)
-    b1.button("View High Risk Programs")
+    view_high = b1.button("View High Risk Programs", key="overview_view_high")
     b2.download_button("Export Executive Snapshot", data=portfolio_df.to_csv(index=False), file_name="executive_snapshot.csv", mime="text/csv")
-    b3.button("Open Scenario Simulator")
-    b4.button("Generate Brief")
+    open_scenario = b3.button("Open Scenario Simulator", key="overview_open_scenario")
+    generate_brief = b4.button("Generate Brief", key="overview_generate_brief")
+    if view_high:
+        st.dataframe(
+            portfolio_df[portfolio_df["Risk"] == "High"].sort_values("Overrun %", ascending=False),
+            use_container_width=True,
+            hide_index=True,
+        )
+    if open_scenario:
+        st.info("Open the `Scenario Simulator` tab to run live what-if analysis for the current selected program.")
+    if generate_brief:
+        st.success(st.session_state.get("latest_summary", "Executive brief is ready after a prediction run."))
 
 
 def page_program_intake() -> None:
@@ -507,10 +623,20 @@ def page_prediction_analysis() -> None:
         st.success(f"Suggested action: {result['recommendation']}")
 
     with tabs[3]:
-        st.button("Drill into Risk Drivers")
-        st.button("Run What-If Scenario")
-        st.button("Compare to Historical Baseline")
-        st.button("Flag for Escalation")
+        drill = st.button("Drill into Risk Drivers", key="ai_drill_risk")
+        run_what_if = st.button("Run What-If Scenario", key="ai_run_what_if")
+        compare_hist = st.button("Compare to Historical Baseline", key="ai_compare_hist")
+        escalate = st.button("Flag for Escalation", key="ai_flag_escalation")
+        if drill:
+            st.info("Risk driver detail prepared. Open `Risk Explainability` tab for top SHAP contributors.")
+        if run_what_if:
+            st.info("What-if flow available in `Scenario Simulator` tab.")
+        if compare_hist:
+            st.success(
+                f"Baseline check: Traditional EAC {money(result['traditional_eac'])} vs AI EAC {money(result['ai_eac'])}."
+            )
+        if escalate:
+            st.error("Escalation flag set for finance review within 7 days.")
 
 
 def page_explainability() -> None:
@@ -731,6 +857,7 @@ def main() -> None:
         portfolio_df = portfolio_df[portfolio_df["Program Type"] == sidebar_type]
     if sidebar_contract != "All":
         portfolio_df = portfolio_df[portfolio_df["Contract Type"] == sidebar_contract]
+    render_moving_cards(portfolio_df)
 
     nav_tabs = st.tabs(
         [
