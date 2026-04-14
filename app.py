@@ -179,6 +179,10 @@ def inject_theme(theme_mode: str) -> None:
         }}
         [data-testid="stMetricValue"] {{
             color: {text} !important;
+            font-size: clamp(1rem, 2vw, 1.4rem) !important;
+        }}
+        [data-testid="stMetricValue"] > div {{
+            font-size: clamp(1rem, 2vw, 1.4rem) !important;
         }}
         [data-testid="stMetricLabel"] {{
             color: {muted} !important;
@@ -558,11 +562,6 @@ def page_program_intake() -> None:
             st.session_state["draft_payload"] = sanitize_payload(dict(samples["Sustainment Alpha (Low Risk)"]))
             do_prediction(st.session_state["draft_payload"])
             st.rerun()
-        with st.expander("Show Formula Details"):
-            st.write("Traditional EVMS EAC = AC + (BAC - EV) / CPI")
-            st.write("AI EAC = ML prediction using EVMS + supply chain risk signals")
-        with st.expander("Show Raw Inputs (Draft)"):
-            st.json(st.session_state.get("draft_payload", DEFAULT_PAYLOAD))
 
 
 def require_latest() -> bool:
@@ -682,8 +681,8 @@ def page_explainability() -> None:
     cards = explain_df.head(5)
     c1, c2, c3, c4, c5 = st.columns(5)
     cols = [c1, c2, c3, c4, c5]
-    for idx, row in cards.iterrows():
-        cols[idx % 5].metric(row["feature"], "High" if abs(row["shap_value"]) > cards["shap_value"].abs().median() else "Medium")
+    for i, (_, row) in enumerate(cards.iterrows()):
+        cols[i % 5].metric(row["feature"], "High" if abs(row["shap_value"]) > cards["shap_value"].abs().median() else "Medium")
 
     with st.expander("Technical Details"):
         st.dataframe(explain_df[["feature", "shap_value", "impact_abs"]], use_container_width=True, hide_index=True)
@@ -703,12 +702,11 @@ def page_portfolio(portfolio_df: pd.DataFrame) -> None:
     st.subheader("5) Portfolio Command Center")
     show_alert_banner(portfolio_df)
 
-    c1, c2, c3, c4, c5 = st.columns(5)
+    c1, c2, c3, c4 = st.columns(4)
     type_filter = c1.selectbox("Program Type", ["All"] + sorted(portfolio_df["Program Type"].unique().tolist()))
     contract_filter = c2.selectbox("Contract Type", ["All"] + sorted(portfolio_df["Contract Type"].unique().tolist()))
     risk_filter = c3.multiselect("Risk", options=["Low", "Medium", "High"], default=["Low", "Medium", "High"])
     phase_filter = c4.selectbox("Phase", ["All"] + sorted(portfolio_df["Phase"].unique().tolist()))
-    search = c5.text_input("Search Program")
 
     f = portfolio_df.copy()
     if type_filter != "All":
@@ -718,8 +716,6 @@ def page_portfolio(portfolio_df: pd.DataFrame) -> None:
     if phase_filter != "All":
         f = f[f["Phase"] == phase_filter]
     f = f[f["Risk"].isin(risk_filter)]
-    if search:
-        f = f[f["Program Name"].str.contains(search, case=False)]
 
     b1, b2, b3, b4 = st.columns(4)
     if b1.button("Sort by Highest Risk"):
