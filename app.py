@@ -132,25 +132,49 @@ def bootstrap_prediction_state() -> None:
 
 def inject_theme(theme_mode: str) -> None:
     if theme_mode == "Dark":
-        bg = "#06122a"
-        panel = "#0d1e3b"
-        accent = "#00c0f3"
-        muted = "#b7c8e5"
-        text = "#e9f1ff"
-        border = "rgba(138,166,205,0.28)"
-        hero_bg = "linear-gradient(100deg, #153273 0%, #006eb3 55%, #0093c4 100%)"
+        bg = "#0b101e"
+        panel = "#192231"
+        accent = "#7dd3fc"
+        muted = "#94a3b8"
+        text = "#f8fafc"
+        border = "rgba(255,255,255,0.12)"
+        hero_bg = "linear-gradient(105deg, #17356b 0%, #1e4f93 38%, #2b73bd 70%, #64b8ea 100%)"
+        front_bg = "linear-gradient(180deg, #0b101e 0%, #0e1a33 42%, #11264a 100%)"
+        moving_wrap_bg = "linear-gradient(90deg, rgba(137, 204, 246, 0.14) 0%, rgba(91, 174, 235, 0.20) 52%, rgba(42, 123, 201, 0.26) 100%)"
+        card_shades = [
+            "linear-gradient(135deg, #0c2e5c 0%, #14508f 100%)",
+            "linear-gradient(135deg, #124580 0%, #1d64ad 100%)",
+            "linear-gradient(135deg, #1b5da1 0%, #2f7fca 100%)",
+            "linear-gradient(135deg, #2a74bd 0%, #57a8e0 100%)",
+            "linear-gradient(135deg, #3a86ca 0%, #7dc4ee 100%)",
+            "linear-gradient(135deg, #2f6caf 0%, #5fafe3 100%)",
+        ]
     else:
-        bg = "#eef3fb"
+        bg = "#f1f7ff"
         panel = "#ffffff"
-        accent = "#0047bb"
-        muted = "#334a68"
-        text = "#0a1f44"
-        border = "rgba(15,54,118,0.16)"
-        hero_bg = "linear-gradient(100deg, #184cc2 0%, #008cd6 55%, #00bae3 100%)"
+        accent = "#2563eb"
+        muted = "#334155"
+        text = "#10223d"
+        border = "rgba(30, 64, 175, 0.16)"
+        hero_bg = "linear-gradient(105deg, #2855ad 0%, #3d7dd7 42%, #64a9ef 78%, #b9e5ff 100%)"
+        front_bg = "linear-gradient(180deg, #f5fbff 0%, #e8f4ff 55%, #d9ebff 100%)"
+        moving_wrap_bg = "linear-gradient(90deg, #ecf6ff 0%, #d9ecff 45%, #cae4ff 100%)"
+        card_shades = [
+            "linear-gradient(135deg, #eff8ff 0%, #dceeff 100%)",
+            "linear-gradient(135deg, #e8f3ff 0%, #d2e7ff 100%)",
+            "linear-gradient(135deg, #e1efff 0%, #c7e0ff 100%)",
+            "linear-gradient(135deg, #d9ebff 0%, #bad8ff 100%)",
+            "linear-gradient(135deg, #d1e7ff 0%, #add1ff 100%)",
+            "linear-gradient(135deg, #cbe3ff 0%, #a4ccff 100%)",
+        ]
+    moving_card_css = "".join(
+        [f".moving-card:nth-child(6n+{idx + 1}) {{ background: {shade}; }}" for idx, shade in enumerate(card_shades)]
+    )
     st.markdown(
         f"""
         <style>
         .stApp, .stApp > header, .main {{
+            background: {front_bg} !important;
             background-color: {bg} !important;
             color: {text} !important;
         }}
@@ -187,16 +211,26 @@ def inject_theme(theme_mode: str) -> None:
         [data-testid="stMetricLabel"] {{
             color: {muted} !important;
         }}
-        .stButton > button {{
-            background: {accent} !important;
+        .stButton > button,
+        .stDownloadButton > button {{
+            background: linear-gradient(135deg, {accent} 0%, {"#38bdf8" if theme_mode == "Dark" else "#1d4ed8"} 100%) !important;
             color: {"#041226" if theme_mode == "Dark" else "#ffffff"} !important;
             border: none !important;
             border-radius: 10px !important;
             font-weight: 600 !important;
+            min-height: 2.5rem !important;
+            padding: 0.45rem 1rem !important;
+            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.26) !important;
         }}
-        .stButton > button:hover {{
+        .stButton > button:hover,
+        .stDownloadButton > button:hover {{
             opacity: 0.92;
             transform: translateY(-1px);
+        }}
+        .stButton > button:focus,
+        .stDownloadButton > button:focus {{
+            outline: 2px solid {"#a5f3fc" if theme_mode == "Dark" else "#93c5fd"} !important;
+            outline-offset: 1px !important;
         }}
         div[data-testid="stVerticalBlockBorderWrapper"] {{
             border: 1px solid {border};
@@ -227,9 +261,10 @@ def inject_theme(theme_mode: str) -> None:
             width: 100%;
             border: 1px solid {border};
             border-radius: 14px;
-            background: {panel};
+            background: {moving_wrap_bg};
             padding: 8px 0;
             margin: 8px 0 16px 0;
+            backdrop-filter: blur(2px);
         }}
         .moving-track {{
             display: flex;
@@ -242,17 +277,19 @@ def inject_theme(theme_mode: str) -> None:
             padding: 10px 14px;
             border-radius: 12px;
             border: 1px solid {border};
-            background: {"#0a2750" if theme_mode == "Dark" else "#f6f9ff"};
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
         }}
+        {moving_card_css}
         .moving-label {{
             font-size: 0.82rem;
             color: {muted};
             margin-bottom: 4px;
+            font-weight: 600;
         }}
         .moving-value {{
             font-size: 1.05rem;
             font-weight: 700;
-            color: {accent};
+            color: {"#e8f7ff" if theme_mode == "Dark" else "#0d2f6f"};
         }}
         @keyframes slide {{
             0% {{ transform: translateX(0); }}
