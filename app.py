@@ -237,6 +237,7 @@ def inject_theme(theme_mode: str) -> None:
             border-radius: 14px;
             padding: 1rem;
             background: {panel};
+            box-shadow: 0 16px 32px rgba(15, 23, 42, 0.20);
         }}
         .hero-card {{
             border: 1px solid {border};
@@ -244,11 +245,28 @@ def inject_theme(theme_mode: str) -> None:
             padding: 16px 18px;
             background: {hero_bg};
             margin-bottom: 12px;
+            box-shadow: 0 18px 42px rgba(12, 24, 52, 0.35);
+            position: relative;
+            overflow: hidden;
+        }}
+        .hero-card::before {{
+            content: "";
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 260px;
+            height: 260px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.0) 70%);
+            pointer-events: none;
         }}
         .hero-title {{
-            font-size: clamp(1.2rem, 2vw, 1.5rem);
+            font-size: clamp(1.8rem, 3.3vw, 2.7rem);
             color: #ffffff;
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            text-shadow: 0 6px 20px rgba(5, 13, 40, 0.45);
+            line-height: 1.2;
         }}
         .hero-sub {{
             color: #f0f4f8;
@@ -277,9 +295,22 @@ def inject_theme(theme_mode: str) -> None:
             padding: 10px 14px;
             border-radius: 12px;
             border: 1px solid {border};
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 14px 24px rgba(15, 23, 42, 0.24);
         }}
         {moving_card_css}
+        div[data-testid="stNumberInput"],
+        div[data-testid="stTextInput"],
+        div[data-testid="stSelectbox"],
+        div[data-testid="stTextArea"],
+        div[data-testid="stSlider"] {{
+            filter: drop-shadow(0 8px 14px rgba(15, 23, 42, 0.22));
+        }}
+        div[data-baseweb="input"] > div,
+        div[data-baseweb="select"] > div,
+        div[data-baseweb="base-input"] {{
+            border-radius: 10px !important;
+            border: 1px solid {border} !important;
+        }}
         .moving-label {{
             font-size: 0.82rem;
             color: {muted};
@@ -528,7 +559,6 @@ def page_program_intake() -> None:
             st.session_state["draft_payload"] = sanitize_payload(dict(samples[sample_choice]))
         draft = sanitize_payload(st.session_state["draft_payload"])
 
-        st.markdown("**Section A: Program Info**")
         c1, c2 = st.columns(2)
         with c1:
             program_name = st.text_input("Program Name", value=draft["program_name"])
@@ -537,14 +567,12 @@ def page_program_intake() -> None:
             contract_type = st.selectbox("Contract Type", ["Cost Plus", "Fixed Price"], index=["Cost Plus", "Fixed Price"].index(draft["contract_type"]))
             program_phase = st.selectbox("Program Phase", ["Design", "Build", "Test", "Deployment"], index=["Design", "Build", "Test", "Deployment"].index(draft["program_phase"]))
 
-        st.markdown("**Section B: Financial Inputs**")
         f1, f2, f3, f4 = st.columns(4)
         bac = f1.number_input("BAC", min_value=1_000_000.0, value=float(draft["BAC"]))
         ac = f2.number_input("AC", min_value=100_000.0, value=float(draft["AC"]))
         ev = f3.number_input("EV", min_value=100_000.0, value=float(draft["EV"]))
         pv = f4.number_input("PV", min_value=100_000.0, value=float(draft["PV"]))
 
-        st.markdown("**Section C: Operational Inputs**")
         o1, o2, o3 = st.columns(3)
         delay = o1.slider("Supplier Delay (days)", 0, 180, int(draft["subcontractor_delay_days"]))
         changes = o2.number_input("Change Orders Count", min_value=0, max_value=40, value=int(draft["change_orders_count"]))
