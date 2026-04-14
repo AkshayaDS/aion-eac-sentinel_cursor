@@ -13,19 +13,30 @@ from src.business_rules import (
     get_recommendation,
     get_risk_band,
 )
+from src.data_generator import save_dataset
+from src.train import DATA_PATH, train_models
 
 
 ROOT = Path(__file__).resolve().parents[1]
 MODELS_DIR = ROOT / "models"
 
 
-def _load_artifacts() -> dict[str, Any]:
-    return {
-        "eac_model": joblib.load(MODELS_DIR / "eac_model.pkl"),
-        "risk_model": joblib.load(MODELS_DIR / "risk_model.pkl"),
-        "preprocessor": joblib.load(MODELS_DIR / "preprocessor.pkl"),
-        "feature_columns": joblib.load(MODELS_DIR / "feature_columns.pkl"),
-    }
+def _load_artifacts(rebuild_on_failure: bool = True) -> dict[str, Any]:
+    try:
+        return {
+            "eac_model": joblib.load(MODELS_DIR / "eac_model.pkl"),
+            "risk_model": joblib.load(MODELS_DIR / "risk_model.pkl"),
+            "preprocessor": joblib.load(MODELS_DIR / "preprocessor.pkl"),
+            "feature_columns": joblib.load(MODELS_DIR / "feature_columns.pkl"),
+        }
+    except Exception:
+        # Hosted environments may fail to unpickle locally-trained artifacts
+        # (version/module-path mismatch). Rebuild once and retry.
+        if not rebuild_on_failure:
+            raise
+        save_dataset(DATA_PATH, n_rows=700)
+        train_models()
+        return _load_artifacts(rebuild_on_failure=False)
 
 
 def prepare_features(input_data: dict[str, Any]) -> pd.DataFrame:
